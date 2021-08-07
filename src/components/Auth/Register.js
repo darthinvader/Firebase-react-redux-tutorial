@@ -19,6 +19,8 @@ const Register = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [usersRef, setUsersRef] = useState(firebase.database().ref("users"));
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -39,6 +41,9 @@ const Register = () => {
             )}?d=identicon`,
           })
           .then(() => {
+            saveUser(createdUser).then(() => {
+              console.log("user saved");
+            });
             setLoading(false);
           })
           .catch((err) => {
@@ -92,6 +97,13 @@ const Register = () => {
     errors.some((error) => error.toLowerCase().includes(inputName))
       ? "error"
       : "";
+
+  const saveUser = (createdUser) => {
+    return usersRef.child(createdUser.user.uid).set({
+      name: createdUser.user.displayName,
+      avatar: createdUser.user.photoURL,
+    });
+  };
 
   return (
     <Grid textAlign="center" verticalAlign="middle" className="app">
