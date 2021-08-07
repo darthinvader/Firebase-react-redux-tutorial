@@ -16,8 +16,10 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [errors, setErrors] = useState([]);
 
   const handleSubmit = (e) => {
+    if (!isFormValid()) return;
     e.preventDefault();
     console.log(username, password);
     firebase
@@ -30,6 +32,41 @@ const Register = () => {
         console.error(err);
       });
   };
+
+  const isFormValid = () => {
+    let errors = [];
+    let error;
+    if (isFormEmpty()) {
+      error = { message: "Fill in all fields" };
+      setErrors(errors.concat(error));
+      return false;
+    } else if (!isPasswordValid()) {
+      error = { message: "Password is invalid" };
+      setErrors(errors.concat(error));
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const isFormEmpty = () => {
+    return (
+      !username.length ||
+      !email.length ||
+      !password.length | !passwordConfirm.length
+    );
+  };
+
+  const isPasswordValid = () => {
+    return (
+      password === passwordConfirm &&
+      password.length > 6 &&
+      passwordConfirm.length > 6
+    );
+  };
+
+  const displayErrors = () =>
+    errors.map((error, i) => <p key={i}>{error.message}</p>);
 
   return (
     <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -96,6 +133,12 @@ const Register = () => {
             </Button>
           </Segment>
         </Form>
+        {errors.length > 0 && (
+          <Message error>
+            <h3>Error</h3>
+            {displayErrors()}
+          </Message>
+        )}
         <Message>
           Already a user?<Link to="/login">Login</Link>
         </Message>
