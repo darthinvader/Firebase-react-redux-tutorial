@@ -1,4 +1,5 @@
 import { useState } from "react";
+import md5 from "md5";
 import firebase from "../../firebase";
 import {
   Grid,
@@ -30,7 +31,21 @@ const Register = () => {
       .createUserWithEmailAndPassword(email, password)
       .then((createdUser) => {
         console.log(createdUser);
-        setLoading(false);
+        createdUser.user
+          .updateProfile({
+            displayName: username,
+            photoURL: `http://gravatar.com/avatar/${md5(
+              createdUser.user.email
+            )}?d=identicon`,
+          })
+          .then(() => {
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+            setErrors(errors.concat(err.message));
+          });
       })
       .catch((err) => {
         console.error(err);
