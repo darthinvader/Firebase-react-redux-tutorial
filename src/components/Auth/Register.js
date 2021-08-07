@@ -73,6 +73,11 @@ const Register = () => {
 
   const displayErrors = () => errors.map((error, i) => <p key={i}>{error}</p>);
 
+  const handleInputError = (inputName) =>
+    errors.some((error) => error.toLowerCase().includes(inputName))
+      ? "error"
+      : "";
+
   return (
     <Grid textAlign="center" verticalAlign="middle" className="app">
       <Grid.Column style={{ maxWidth: 450 }}>
@@ -92,6 +97,7 @@ const Register = () => {
               onChange={(e) => {
                 setUsername(e.target.value);
               }}
+              className={handleInputError("username")}
               type="text"
             />
             <Form.Input
@@ -104,11 +110,7 @@ const Register = () => {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
-              className={
-                errors.some((error) => error.toLowerCase().includes("email"))
-                  ? "error"
-                  : ""
-              }
+              className={handleInputError("email")}
               type="email"
             />
 
@@ -122,6 +124,7 @@ const Register = () => {
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
+              className={handleInputError("password")}
               type="password"
             />
 
@@ -135,6 +138,7 @@ const Register = () => {
               onChange={(e) => {
                 setPasswordConfirm(e.target.value);
               }}
+              className={handleInputError("password")}
               type="password"
             />
 
