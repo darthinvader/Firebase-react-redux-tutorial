@@ -104,6 +104,11 @@ const Register = () => {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
+              className={
+                errors.some((error) => error.toLowerCase().includes("email"))
+                  ? "error"
+                  : ""
+              }
               type="email"
             />
 
