@@ -17,19 +17,25 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [errors, setErrors] = useState([]);
-
+  const [loading, setLoading] = useState(false);
   const handleSubmit = (e) => {
-    if (!isFormValid()) return;
     e.preventDefault();
+
+    if (!isFormValid()) return;
+    setErrors([]);
+    setLoading(true);
     console.log(username, password);
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((createdUser) => {
         console.log(createdUser);
+        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
+        setLoading(false);
+        setErrors(errors.concat(err.message));
       });
   };
 
@@ -37,11 +43,11 @@ const Register = () => {
     let errors = [];
     let error;
     if (isFormEmpty()) {
-      error = { message: "Fill in all fields" };
+      error = "Fill in all fields";
       setErrors(errors.concat(error));
       return false;
     } else if (!isPasswordValid()) {
-      error = { message: "Password is invalid" };
+      error = "Password is invalid";
       setErrors(errors.concat(error));
       return false;
     } else {
@@ -65,8 +71,7 @@ const Register = () => {
     );
   };
 
-  const displayErrors = () =>
-    errors.map((error, i) => <p key={i}>{error.message}</p>);
+  const displayErrors = () => errors.map((error, i) => <p key={i}>{error}</p>);
 
   return (
     <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -128,7 +133,13 @@ const Register = () => {
               type="password"
             />
 
-            <Button color="orange" fluid size="large">
+            <Button
+              disabled={loading}
+              className={loading ? "loading" : ""}
+              color="orange"
+              fluid
+              size="large"
+            >
               Submit
             </Button>
           </Segment>
